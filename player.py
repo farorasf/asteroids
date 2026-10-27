@@ -10,8 +10,8 @@ class Player(CircleShape):
         self.x = x
         self.y = y
         self.PLAYER_RADIUS = PLAYER_RADIUS
-    
-    rotation = 0
+        self.shot_cooldown = 0
+        self.rotation = 0
     
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED*dt
@@ -39,7 +39,13 @@ class Player(CircleShape):
         if keys[pygame.K_s]:
             self.move(-dt)
         if keys[pygame.K_SPACE]:
-            self.shoot()    
+            if self.shot_cooldown > 0:
+                pass
+            else:
+                self.shoot()
+                self.shot_cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
+        
+        self.shot_cooldown -= dt    
             
     def move(self, dt):
         unit_vector = pygame.Vector2(0,1)
@@ -48,7 +54,6 @@ class Player(CircleShape):
         self.position += rotated_with_speed_vector
         
     def shoot(self):
-        print("pewpew")
         shot = Shot(self.position[0], self.position[1])
         shot.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
         
