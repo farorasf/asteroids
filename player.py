@@ -12,6 +12,7 @@ class Player(CircleShape):
         self.PLAYER_RADIUS = PLAYER_RADIUS
         self.shot_cooldown = 0
         self.rotation = 0
+        self.immunity_frames = 0
     
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED*dt
@@ -25,9 +26,14 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen) -> None:
-        pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH)
+        if self.immunity_frames > 10:
+            pygame.draw.polygon(screen, "red", self.triangle(), LINE_WIDTH)
+        else:
+            pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH)
         
     def update(self, dt: float) -> None:
+        self.hit_immunity()
+        print(self.immunity_frames)
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
@@ -56,4 +62,12 @@ class Player(CircleShape):
     def shoot(self):
         shot = Shot(self.position[0], self.position[1])
         shot.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+        
+    def hit_immunity(self):
+        self.immunity_frames -= 1
+        if self.immunity_frames < 0:
+            self.immunity_frames = 0
+        return self.immunity_frames
+        
+        
         

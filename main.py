@@ -30,6 +30,7 @@ def main():
     afield = AsteroidField()
     player = Player(x = SCREEN_WIDTH/2, y = SCREEN_HEIGHT/2)
     score = Score(0)
+    health = Health(PLAYER_HEALTH)
     
     while True:
         log_state()     
@@ -37,23 +38,28 @@ def main():
             if event.type == pygame.QUIT:
                 return
         screen.fill("black")
-        draw_text(screen, f"Score: {score.score}", text_font, (255,255,0), SCREEN_WIDTH/2-50, 10)
+        draw_text(screen, f"Score: {score.score_amount}", text_font, (255,255,0), 10, 10)
+        draw_text(screen, f"Health: {health.health_amount}", text_font, health.health_colour(), SCREEN_WIDTH-125, 10)
         dt = clock.tick(60)/1000 
         updatable.update(dt)
         
         for asteroid in asteroids:
             if asteroid.collides_with(player):
-                log_event("player_hit")
-                print("Game over!")
-                print (f"Your score: {score.score}")
-                sys.exit()
+                if player.immunity_frames <= 0:
+                    health.health_decrease()
+                    player.immunity_frames = PLAYER_IMMUNITY_FRAMES
+                if health.health_amount <= 0:
+                    log_event("player_hit")
+                    print("Game over!")
+                    print (f"Your score: {score.score_amount}")
+                    sys.exit()
                 
             for shot in shots:
                 if asteroid.collides_with(shot):
                     log_event("asteroid_shot")
                     asteroid.split()
                     shot.kill()
-                    score.increase_score(score.score, 1, asteroid.radius)
+                    score.increase_score(score.score_amount, 1, asteroid.radius)
 
         for drawables in drawable:
             drawables.draw(screen)
