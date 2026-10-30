@@ -13,31 +13,17 @@ class Score():
     def __init__(self, score_amount = 0):
         self.score_amount = score_amount
     
-    def increase_score(self, score, increase, asteroid_radius):
+    def increase_score(self, score_class, increase, asteroid_radius):
         if asteroid_radius <= ASTEROID_MIN_RADIUS:
-            self.score_amount += increase * 3
+            score_class.score_amount += increase * 3
         elif ASTEROID_MIN_RADIUS < asteroid_radius < ASTEROID_MAX_RADIUS:
-            self.score_amount += increase * 2
+            score_class.score_amount += increase * 2
         else:
-            self.score_amount += increase
+            score_class.score_amount += increase
             
-class Health():
-    def __init__(self, health_amount):
-        self.health_amount = health_amount
-        
-    def health_decrease(self):
-        self.health_amount -= 1
+class Userinterface():
 
-    def health_colour(self):
-        if self.health_amount == 3:
-            return (0,255,0)
-        if self.health_amount == 2:
-            return (255,255,0)
-        if self.health_amount == 1:
-            return (255,0,0)
-
-class Lives():
-    def __init__(self, life_amount):
-        self.life_amount = life_amount
-        
-        
+    def ui_draw(self, screen, score_class, health_class, lives_class):
+        draw_text(screen, f"Score: {score_class.score_amount}", text_font, (255,255,0), 10, 10)
+        draw_text(screen, f"Health: {health_class.health_amount}", text_font, health_class.health_colour(), SCREEN_WIDTH/2 - 30, 10)
+        draw_text(screen, f"Lives: {lives_class.life_amount}", text_font, (255,255,255), SCREEN_WIDTH - 125, 10)
