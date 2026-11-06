@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, os
 pygame.init()
 from logger import log_state, log_event
 from constants import *
@@ -8,10 +8,15 @@ from asteroidfield import AsteroidField
 from shot import Shot
 from userinterface import *
 from healthandlives import *
+from explosion import *
+from imageload import *
 
 
 
 def main():
+    
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    image_load_explosion()
     
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -22,12 +27,13 @@ def main():
     
     clock = pygame.time.Clock()
     dt = 0.0
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
     
     AsteroidField.containers = (updatable)
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     Shot.containers = (shots, updatable, drawable)
+    Explosion.containers = (updatable, drawable)
      
     afield = AsteroidField()
     player = Player(x = SCREEN_WIDTH/2, y = SCREEN_HEIGHT/2)
@@ -36,6 +42,9 @@ def main():
     lives = Lives(PLAYER_LIVES)
     userinterface = Userinterface()
     
+    
+
+    
     while True:
         log_state()     
         for event in pygame.event.get():
@@ -43,9 +52,10 @@ def main():
                 return
         screen.fill("black")
         userinterface.ui_draw(screen, score, health, lives)
-        dt = clock.tick(60)/1000 
-        updatable.update(dt)
+        dt = clock.tick(60)/1000 #0.016
         
+        updatable.update(dt)
+             
         for asteroid in asteroids:
             if asteroid.collides_with(player):
                 if player.immunity_frames <= 0:
@@ -58,11 +68,15 @@ def main():
                 
             for shot in shots:
                 if asteroid.collides_with(shot):
+                    explosion = Explosion(screen, asteroid.position[0] - EXPLOSION_RADIUS/2, asteroid.position[1] - EXPLOSION_RADIUS/2)
                     log_event("asteroid_shot")
                     asteroid.split()
                     shot.kill()
-                    score.increase_score(score, 1, asteroid.radius)
 
+                    score.increase_score(score, 1, asteroid.radius)
+                    
+           
+        
         for drawables in drawable:
             drawables.draw(screen)
             

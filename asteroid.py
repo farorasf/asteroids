@@ -4,23 +4,23 @@ from constants import *
 from circleshape import CircleShape
 from logger import log_event
 from userinterface import *
+from explosion import *
 
 class Asteroid(CircleShape):
     def __init__(self, x: float, y: float, radius: float) -> None:
         super().__init__(x, y, radius)
         self.x = x
         self.y = y
-        self.radius = radius
-
-    
+        self.radius = radius   
         
     def draw(self, screen):
         pygame.draw.circle(screen, "white", self.position, self.radius, LINE_WIDTH)
     
     def update(self, dt):
-        self.position += self.velocity * dt
+        self.position += self.velocity * dt 
+  
         
-    def split(self):
+    def split(self):               
         self.kill()
         if self.radius <= ASTEROID_MIN_RADIUS:       
             return
@@ -32,4 +32,5 @@ class Asteroid(CircleShape):
         asteroid_1.velocity = self.velocity.rotate(random_angle) * 1.2
         asteroid_2.velocity = self.velocity.rotate(-random_angle) * 1.2
         
+
         
