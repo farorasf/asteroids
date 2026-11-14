@@ -31,6 +31,9 @@ class Lives():
         player_class.position[0] = SCREEN_WIDTH/2
         player_class.position[1] = SCREEN_HEIGHT/2
         player_class.rotation = 0
+        player_class.speed = 0
+        player_class.velocity_x = 0
+        player_class.velocity_y = 0
         player_class.immunity_frames = 2 * PLAYER_IMMUNITY_FRAMES
         
 
